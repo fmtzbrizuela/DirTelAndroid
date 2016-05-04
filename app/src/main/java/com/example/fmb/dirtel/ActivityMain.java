@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
 import android.view.WindowManager;
 
 import java.io.BufferedInputStream;
@@ -34,19 +35,32 @@ public class ActivityMain extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        // Check if was called for Sync
+        Intent myIntent = getIntent(); // gets the previously created intent
+        String sync = myIntent.getStringExtra("Sync"); // will return "Sync" if called by a class
         // Load DirTel Files, first from Local Storage
-        dirorgsJSON = getFileFromLocalStorage("Org");
-        dirpersJSON = getFileFromLocalStorage("Per");
-        if (dirorgsJSON.charAt(0) == '[' && dirorgsJSON.charAt(dirorgsJSON.length()-1) == ']' &&
+        if (sync != null && sync.equals("Sync")){
+            // if there is not good data in local storage, load from the WebServers
+            new LoadDirTelFiles().execute("Org");
+            new LoadDirTelFiles().execute("Per");
+        } else {
+            dirorgsJSON = getFileFromLocalStorage("Org");
+            dirpersJSON = getFileFromLocalStorage("Per");
+            if (dirorgsJSON.charAt(0) == '[' && dirorgsJSON.charAt(dirorgsJSON.length()-1) == ']' &&
                 dirpersJSON.charAt(0) == '[' && dirpersJSON.charAt(dirpersJSON.length()-1) == ']') {
-            konAsyncTaskEnding = 1;
-            callActivityOrg();
-            return;
+                    konAsyncTaskEnding = 1;
+                    callActivityOrg();
+                    return;
+            }
         }
 
-        // if there is not good data in local storage, load from the WebServers
-        new LoadDirTelFiles().execute("Org");
-        new LoadDirTelFiles().execute("Per");
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
     }
 
     private void callActivityOrg(){

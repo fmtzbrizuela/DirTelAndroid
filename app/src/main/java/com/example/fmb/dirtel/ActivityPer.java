@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -76,6 +78,27 @@ public class ActivityPer extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.UpData:
+                Log.e(TAG, "Up Data");
+                Intent myIntent = new Intent(this, ActivityMain.class);
+                myIntent.putExtra("Sync","Sync"); // Just to say that you wanto sync
+                startActivity(myIntent);
+                return true;
+        }
+        return false;
+    }
+
 
     private void perDetails(int position){
         DirPer per = dirpers.get(position);
